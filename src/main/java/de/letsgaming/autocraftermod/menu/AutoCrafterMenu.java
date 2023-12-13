@@ -91,11 +91,11 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
         ItemStack copyFromStack = fromStack.copy();
 
         if(pIndex < 36) {
-            // We are inside of the player's inventory
-            if(!moveItemStackTo(fromStack, 36, 63, false))
+            // Moving from Player to BlockEntity
+            if(!moveItemStackTo(fromStack, 36, 46, false))
                 return ItemStack.EMPTY;
-        } else if (pIndex < 63) {
-            // We are inside of the block entity inventory
+        } else if (pIndex < 46) {
+            // Moving from BlockEntity to Player
             if(!moveItemStackTo(fromStack, 0, 36, false))
                 return ItemStack.EMPTY;
         } else {
