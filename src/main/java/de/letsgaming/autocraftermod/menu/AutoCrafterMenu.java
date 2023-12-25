@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.SlotItemHandler;
@@ -80,33 +81,39 @@ public class AutoCrafterMenu extends AbstractContainerMenu {
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player pPlayer, int pIndex) {
         Slot fromSlot = getSlot(pIndex);
-        ItemStack fromStack = fromSlot.getItem();
 
-        if(fromStack.getCount() <= 0)
-            fromSlot.set(ItemStack.EMPTY);
+        if (fromSlot != null && fromSlot.hasItem()) {
+            ItemStack fromStack = fromSlot.getItem().copy();
 
-        if(!fromSlot.hasItem())
-            return ItemStack.EMPTY;
-
-        ItemStack copyFromStack = fromStack.copy();
-
-        if(pIndex < 36) {
-            // Moving from Player to BlockEntity
-            if(!moveItemStackTo(fromStack, 36, 46, false))
+            if (pIndex < 10) {
+                // Moving from crafting grid or input slot to player inventory
+                if (!moveItemStackTo(fromStack, 10, 46, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (pIndex < 46) {
+                // Moving from player inventory to crafting grid or input slot
+                if(!moveItemStackTo(fromStack, 0, 10, false))
+                    return ItemStack.EMPTY;
+            } else {
+                System.err.println("Invalid slot index: " + pIndex);
                 return ItemStack.EMPTY;
-        } else if (pIndex < 46) {
-            // Moving from BlockEntity to Player
-            if(!moveItemStackTo(fromStack, 0, 36, false))
-                return ItemStack.EMPTY;
-        } else {
-            System.err.println("Invalid slot index: " + pIndex);
-            return ItemStack.EMPTY;
+            }
+
+            fromSlot.setChanged();
+
+            if (fromStack.getCount() <= 0) {
+                fromSlot.set(ItemStack.EMPTY);
+            }
+
+            return fromStack;
         }
 
-        fromSlot.setChanged();
-        fromSlot.onTake(pPlayer, fromStack);
+        return ItemStack.EMPTY;
+    }
 
-        return copyFromStack;
+    private boolean isCraftingGridSlot(int index) {
+        // Check if the slot index corresponds to a slot in the crafting grid
+        return index >= 1 && index < 10;
     }
 
     @Override

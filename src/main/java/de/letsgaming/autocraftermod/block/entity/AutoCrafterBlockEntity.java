@@ -10,6 +10,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -20,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoCrafterBlockEntity extends BlockEntity implements MenuProvider {
-    private static final Component TITLE =
-            Component.translatable("container." + AutoCrafterMod.MOD_ID + ".auto_crafter_block");
+    private static final Component TITLE = Component.translatable("container." + AutoCrafterMod.MOD_ID + ".auto_crafter_block");
 
     private static final int INPUT_SLOT = 0;
     private final ItemStackHandler craftingGrid = new ItemStackHandler(9) {
@@ -102,5 +102,9 @@ public class AutoCrafterBlockEntity extends BlockEntity implements MenuProvider 
 
     public int getInputSlot() {
         return INPUT_SLOT;
+    }
+
+    public ItemStack getInputSlotItem() {
+        return inputSlot.getStackInSlot(0);
     }
 }
